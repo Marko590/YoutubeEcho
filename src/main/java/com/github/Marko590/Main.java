@@ -35,13 +35,18 @@ public class Main {
                         if (youtube.getUrl() != null)
                         {
                             String jsonString=youtube.getJson(youtube.getUrl());
-                            JSONObject jsonObject=new JSONObject(jsonString);
+                            if(jsonString!=null){
+                                JSONObject jsonObject=new JSONObject(jsonString);
 
-                            embed.setImage(jsonObject.getString("thumbnail_url"));
-                            embed.setAuthor(jsonObject.getString("author_name"),jsonObject.getString("author_url"),"https://cdn.discordapp.com/embed/avatars/0.png");
-                            embed.setTitle(jsonObject.getString("title"));
+                                embed.setImage(jsonObject.getString("thumbnail_url"));
+                                embed.setAuthor(jsonObject.getString("author_name"),jsonObject.getString("author_url"),"https://cdn.discordapp.com/embed/avatars/0.png");
+                                embed.setTitle(jsonObject.getString("title"));
 
-                            event.getChannel().sendMessage(embed);
+                                event.getChannel().sendMessage(embed);
+                            }
+                        else{
+                            event.getChannel().sendMessage("Wrong youtube url!");
+                            }
 
                         }
                     }

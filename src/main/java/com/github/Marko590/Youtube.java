@@ -11,34 +11,44 @@ public class Youtube {
     private static String jsonFetchUrl="https://www.youtube.com/oembed?url=";
     String url;
     YoutubeEnum format;
-
+    private static String regularFormat="youtube.com/watch?v=";
+    private static String shortFormat="youtu.be/";
+    private static String httpsPrefix="https://";
     public Youtube(){
         this.url=null;
     }
     public Youtube(String url){
         format=YoutubeEnum.fromInt(0);
-        if(url.startsWith("https://www.youtube.com/watch?v="))
-        {
-            format = YoutubeEnum.HTTPS;
-        }
-        else if(url.startsWith("youtube.com/watch?v="))
+
+        if(url.startsWith(regularFormat)||url.startsWith(httpsPrefix+regularFormat))
         {
             format = YoutubeEnum.REGULAR;
         }
-        this.jsonFetchUrl="https://www.youtube.com/oembed?url=";
+        else if(url.startsWith(shortFormat)||url.startsWith(httpsPrefix+shortFormat)){
+            format=YoutubeEnum.SHORT;
+        }
+
         this.url=url;
     }
 
     public void setUrl(String url) {
 
         format=YoutubeEnum.fromInt(0);
-        if(url.startsWith("https://www.youtube.com/watch?v="))
+        if(url.startsWith(httpsPrefix))
         {
-            format = YoutubeEnum.HTTPS;
+            if (url.startsWith(regularFormat))
+                format = YoutubeEnum.HTTPS_REGULAR;
+
+            else if (url.startsWith(shortFormat))
+                format = YoutubeEnum.HTTPS_SHORT;
         }
-        else if(url.startsWith("youtube.com/watch?v="))
-        {
-            format = YoutubeEnum.REGULAR;
+        else
+            {
+            if (url.startsWith(regularFormat))
+                format = YoutubeEnum.REGULAR;
+
+            else if (url.startsWith(shortFormat))
+                format = YoutubeEnum.SHORT;
         }
         this.url = url;
     }
@@ -48,13 +58,14 @@ public class Youtube {
     }
 
     public String getId() {
-        if (format == YoutubeEnum.HTTPS)
+        if (format == YoutubeEnum.HTTPS_REGULAR)
             return url.subSequence(32, 43).toString();
-
         else if (format == YoutubeEnum.REGULAR)
             return url.subSequence(20, 31).toString();
-
-
+        else if(format == YoutubeEnum.SHORT)
+            return url.subSequence(9,url.length()).toString();
+        else if(format ==YoutubeEnum.HTTPS_SHORT)
+            return url.subSequence(17,url.length()).toString();
         else
         {
             return null;
